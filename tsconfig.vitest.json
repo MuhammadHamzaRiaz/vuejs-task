@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.app.json",
+  "exclude": [],
+
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.vue",
+    "tests/**/*.ts",
+    "tests/**/*.vue",
+    "components/**/*.vue",
+    "components/**/*.ts"
+  ],
+  "compilerOptions": {
+    "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.vitest.tsbuildinfo",
+
+    "lib": [],
+    "types": ["node", "jsdom"]
+  }
+}
