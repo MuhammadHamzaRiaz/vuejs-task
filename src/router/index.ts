@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/store/auth'
+import SideBarNavigation from '@/components/SideBarNavigation.vue'
+import TopNavBar from '@/components/TopNavBar.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -16,7 +18,11 @@ const router = createRouter({
         {
           path: '',
           name: 'Users',
-          component: () => import('../views/UsersView.vue'),
+          components: {
+            default: () => import('../views/UsersView.vue'),
+            topNav: TopNavBar,
+            sideNav: SideBarNavigation
+          },
           meta: {
             requiresAuth: true
           }
@@ -24,7 +30,11 @@ const router = createRouter({
         {
           path: ':id',
           name: 'User',
-          component: () => import('../views/UserDetailView.vue'),
+          components: {
+            default: () => import('../views/UserDetailView.vue'),
+            topNav: TopNavBar,
+            sideNav: SideBarNavigation
+          },
           meta: {
             requiresAuth: true
           }
@@ -34,7 +44,11 @@ const router = createRouter({
     {
       path: '/profile',
       name: 'UserProfileView',
-      component: () => import('../views/ProfileView.vue'),
+      components: {
+        default: () => import('../views/ProfileView.vue'),
+        topNav: TopNavBar,
+        sideNav: SideBarNavigation
+      },
       meta: {
         requiresAuth: true
       }

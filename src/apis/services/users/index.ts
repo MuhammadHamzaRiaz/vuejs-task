@@ -29,7 +29,7 @@ export const getUsers = (getUserBody: GetUserBody) =>
       total_pages: Math.ceil(createdUsers.length / getUserBody.per_page),
       data: paginatedUsers
     }
-    setTimeout(() => resolve(response), 300)
+    return setTimeout(() => resolve(response), 300)
   })
 
 export const deleteUser = async (reqBody: User) => {
@@ -42,6 +42,6 @@ export const deleteUser = async (reqBody: User) => {
         status: 'success'
       }
     }
-    return resolve(response)
+    return setTimeout(() => resolve(response), 300)
   })
 }

@@ -3,10 +3,7 @@ import SideBarNavigation from '@/components/SideBarNavigation.vue'
 import TopNavBar from '@/components/TopNavBar.vue'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import IconPencil from '@/components/icons/IconPencil.vue'
-import IconBin from '@/components/icons/IconBin.vue'
 import IconInfo from '@/components/icons/IconInfo.vue'
-import IconEye from '@/components/icons/IconEye.vue'
 import UserDialog from '@/components/Dialog/AddUserDialog.vue'
 import { getUsers } from '@/apis/services/users'
 import { addUser } from '@/apis/services/users/addUser'
@@ -14,39 +11,49 @@ import { updateUser } from '@/apis/services/users/updateUser'
 import { deleteUser } from '@/apis/services/users'
 import type { AddUserPayload, User } from '@/types'
 import { useToast } from 'vue-toastification'
+import CustomTable from '@/components/Tables/CustomTable.vue'
+import CustomButton from '@/components/Buttons/CustomButton.vue'
+import ConfirmationDialog from '@/components/Dialog/ConfirmationDialog.vue'
 
-const users = ref<User[]>([])
-const page = ref(1)
-const totalUsersCount = ref(0)
-const totalPage = ref(0)
 const router = useRouter()
-const userAddingLoader = ref(false)
-const userUpdateLoader = ref(false)
-const userForUpdate = ref({})
+const toast = useToast()
 
-const editUser = (user: User) => {
-  userForUpdate.value = user
-  editUserDialog.value = true
-}
-const viewUser = async (user: User) => {
-  router.push({
-    name: 'User',
-    params: { id: user._id }
-  })
-}
-const deleteUserHandler = async (user: User) => {
+// here we are using users state and method
+const users = ref<User[]>([])
+const getUsersHandler = async () => {
   try {
-    const res = await deleteUser(user)
-    toast.success('User deleted successfully')
+    tableLoader.value = true
+    const res: any = await getUsers({
+      page: page.value,
+      per_page: per_page.value
+    })
+    // we can also store the users in store if need users for any other components
+    users.value = res.data
+    totalUsersCount.value = res.total
+    totalPage.value = res.total_pages
     console.log('res', res)
   } catch (error) {
     console.log('error', error)
-    toast.error('Failed to delete user')
   } finally {
-    getUsersHandler()
+    tableLoader.value = false
   }
 }
-const toast = useToast()
+//  here we are managing pagination state and logic
+const page = ref(1)
+const per_page = ref(10)
+const totalPage = ref(0) // refering how much total pages we have in DB
+const totalUsersCount = ref(0) // refering how much total users we have in DB
+const changePagination = (val: number) => {
+  page.value = val
+  getUsersHandler()
+}
+
+// the state and  logic of adding user
+const userAddingLoader = ref(false)
+const closeAddUserDialog = () => {
+  addUserDialog.value = false
+}
+const addUserDialog = ref(false)
 const addUserHandler = async (value: AddUserPayload) => {
   try {
     userAddingLoader.value = true
@@ -62,8 +69,12 @@ const addUserHandler = async (value: AddUserPayload) => {
     addUserDialog.value = false
   }
 }
-const closeAddUserDialog = () => {
-  addUserDialog.value = false
+//  update user
+const userUpdateLoader = ref(false)
+const editUserDialog = ref(false)
+const editUser = (user: User) => {
+  userForUpdate.value = user
+  editUserDialog.value = true
 }
 const closeUpdateUserDialog = () => {
   editUserDialog.value = false
@@ -83,26 +94,10 @@ const updateUserHandler = async (user: User) => {
     editUserDialog.value = false
   }
 }
-const tableLoader = ref(false)
-const getUsersHandler = async () => {
-  try {
-    tableLoader.value = true
-    const res: any = await getUsers({
-      page: page.value,
-      per_page: 10
-    })
-    users.value = res.data
-    totalUsersCount.value = res.total
-    totalPage.value = res.total_pages
-    console.log('res', res)
-  } catch (error) {
-    console.log('error', error)
-  } finally {
-    tableLoader.value = false
-  }
-}
 
-const tableHeader = [
+const userForUpdate = ref({})
+// here we are defining table header
+const tableHeader = ref([
   { title: 'Id.', key: '_id' },
   {
     title: 'Name',
@@ -112,105 +107,110 @@ const tableHeader = [
   { title: 'Image', key: 'avatar' },
   { title: 'Email', key: 'email' },
   { title: 'Actions', key: 'actions', sortable: false }
-]
+])
+//  table loader while fetching data
+const tableLoader = ref(false)
+
+const viewUser = async (user: User) => {
+  router.push({
+    name: 'User',
+    params: { id: user._id }
+  })
+}
+// delete user
+const deleteDialog = ref<Boolean>(false)
+const deleteUserLoading = ref(false)
+const userToDelete = ref()
+const deleteUserConfiramtion = (item: User) => {
+  userToDelete.value = item
+  deleteDialog.value = true
+}
+const onDialogClose = (val: Boolean) => {
+  deleteDialog.value = val
+}
+const onDeleteConfirmation = () => {
+  deleteUserHandler(userToDelete.value)
+  onDialogClose(false)
+}
+const deleteUserHandler = async (user: User) => {
+  try {
+    deleteUserLoading.value = true
+    const res = await deleteUser(user)
+    toast.success('User deleted successfully')
+    console.log('res', res)
+  } catch (error) {
+    console.log('error', error)
+    toast.error('Failed to delete user')
+  } finally {
+    getUsersHandler()
+    deleteUserLoading.value = false
+  }
+}
+
 onMounted(() => {
+  // fetching users
   getUsersHandler()
 })
-
-const addUserDialog = ref(false)
-const editUserDialog = ref(false)
 </script>
 <template>
-  <v-layout>
-    <SideBarNavigation />
-    <div class="w-full">
-      <TopNavBar />
-      <main class="p-3 bg-[#0000001c]">
-        <v-card
-          elevation="0"
-          class="!border-gray-300 h-[calc(100vh-82px)] bg-white"
-          rounded="lg"
-          variant="outlined"
-        >
-          <UserDialog
-            :dialog="addUserDialog"
-            @adduser="addUserHandler"
-            :addingLoading="userAddingLoader"
-            @close="closeAddUserDialog"
-            type="add"
-          />
-          <UserDialog
-            :dialog="editUserDialog"
-            @adduser="updateUserHandler"
-            :addingLoading="userUpdateLoader"
-            @close="closeUpdateUserDialog"
-            :editData="userForUpdate"
-            type="edit"
-          />
-          <v-card-title class="border-b">Users</v-card-title>
-          <v-card-text class="pt-4">
-            <v-data-table
-              :headers="tableHeader"
-              :items="users"
-              :loading="tableLoader"
-              elevation="0"
-              class="main__table"
-            >
-              <template v-slot:top>
-                <div class="flex items-center justify-between relative p-3">
-                  <div class="flex gap-1 text-base font-medium items-center">
-                    User List
-                    <IconInfo />
-                  </div>
-                  <v-btn
-                    color="#7F56D9"
-                    elevation="0"
-                    density="default"
-                    rounded="lg"
-                    @click="addUserDialog = true"
-                  >
-                    Add new user
-                  </v-btn>
-                </div>
-              </template>
-              <template v-slot:[`item.actions`]="{ item }">
-                <v-btn icon @click="editUser(item)" size="small" elevation="0" rounded="lg">
-                  <IconPencil />
-                </v-btn>
-                <v-btn
-                  icon
-                  @click="deleteUserHandler(item)"
-                  size="small"
-                  elevation="0"
-                  rounded="lg"
-                >
-                  <IconBin />
-                </v-btn>
-                <v-btn icon @click="viewUser(item)" size="small" elevation="0" rounded="lg">
-                  <IconEye />
-                </v-btn>
-              </template>
-              <template v-slot:[`item.avatar`]="{ item }">
-                <v-avatar size="small">
-                  <v-img :src="item.avatar" alt="avatar" />
-                </v-avatar>
-              </template>
-
-              <template v-slot:[`bottom`]>
-                <v-pagination
-                  v-model="page"
-                  :length="totalPage"
-                  next-icon="mdi-menu-right"
-                  prev-icon="mdi-menu-left"
-                  @update:model-value="getUsersHandler"
-                ></v-pagination>
-              </template>
-            </v-data-table>
-          </v-card-text>
-        </v-card>
-      </main>
-    </div>
-  </v-layout>
+  <v-card
+    elevation="0"
+    class="!border-gray-300 h-[calc(100vh-82px)] bg-white w-full m-3"
+    rounded="lg"
+    variant="outlined"
+  >
+    <UserDialog
+      :dialog="addUserDialog"
+      @adduser="addUserHandler"
+      :addingLoading="userAddingLoader"
+      @close="closeAddUserDialog"
+      type="add"
+    />
+    <UserDialog
+      :dialog="editUserDialog"
+      @adduser="updateUserHandler"
+      :addingLoading="userUpdateLoader"
+      @close="closeUpdateUserDialog"
+      :editData="userForUpdate"
+      type="edit"
+    />
+    <ConfirmationDialog
+      :openDialog="deleteDialog.valueOf()"
+      @handleDialog="onDialogClose"
+      @deleteUser="onDeleteConfirmation"
+      :button-loading="deleteUserLoading"
+    />
+    <v-card-title class="border-b">Users</v-card-title>
+    <v-card-text class="pt-4">
+      <CustomTable
+        :tableHeader="tableHeader"
+        :dataArray="users"
+        :tableLoader="tableLoader"
+        @editUser="editUser"
+        @deleteUserHandler="deleteUserConfiramtion"
+        @viewUser="viewUser"
+        :totalPage="totalPage"
+        :page="page"
+        @changePagination="changePagination"
+      >
+        <template v-slot:table-top>
+          <div class="flex items-center justify-between relative p-3">
+            <div class="flex gap-1 text-base font-medium items-center">
+              User List
+              <IconInfo />
+            </div>
+            <CustomButton
+              text="add new user"
+              size="default"
+              color="#7F56D9"
+              @on-click="addUserDialog = true"
+              :block="false"
+            />
+          </div>
+        </template>
+      </CustomTable>
+    </v-card-text>
+  </v-card>
 </template>
 
 <style scoped lang="scss">

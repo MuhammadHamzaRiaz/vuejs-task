@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watchEffect } from 'vue'
 import type { AddUserPayload } from '@/types'
+import CustomButton from '../Buttons/CustomButton.vue'
 
 const props = defineProps({
   dialog: Boolean,
@@ -24,15 +25,17 @@ const emit = defineEmits(['close', 'adduser'])
 const dialog = computed(() => props.dialog)
 
 const addUser = () => {
-  if (props.type === 'edit') {
-    emit('adduser', {
-      ...props.editData,
-      firstName: data.value.first_name,
-      lastName: data.value.last_name,
-      email: data.value.email
-    })
-  } else {
-    emit('adduser', data.value)
+  if (valid.value) {
+    if (props.type === 'edit') {
+      emit('adduser', {
+        ...props.editData,
+        firstName: data.value.first_name,
+        lastName: data.value.last_name,
+        email: data.value.email
+      })
+    } else {
+      emit('adduser', data.value)
+    }
   }
 }
 const handleDialogClose = () => {
@@ -113,16 +116,14 @@ watchEffect(() => {
             rounded="lg"
             >Close</v-btn
           >
-          <v-btn
-            type="submit"
-            variant="flat"
+
+          <CustomButton
+            :text="type == 'edit' ? 'Update' : 'Add'"
             color="#7F56D9"
-            :loading="addingLoading"
-            elevation="0"
-            width="100px"
-            rounded="lg"
-            >{{ type == 'edit' ? 'Update' : 'Add' }}</v-btn
-          >
+            :button-loader="addingLoading"
+            :block="false"
+            type="submit"
+          />
         </v-card-actions>
       </v-form>
     </v-card>

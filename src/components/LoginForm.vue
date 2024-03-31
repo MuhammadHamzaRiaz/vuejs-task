@@ -4,6 +4,7 @@ import { userLogin } from '@/apis/services/auth/login'
 import { useToast } from 'vue-toastification'
 import { useAuthStore } from '@/store/auth'
 import { useRouter } from 'vue-router'
+import CustomButton from '@/components/Buttons/CustomButton.vue'
 
 const email = ref('')
 const password = ref('')
@@ -53,7 +54,7 @@ const submitForm = async () => {
 </script>
 
 <template>
-  <v-form v-model="valid">
+  <v-form v-model="valid" @submit.prevent="submitForm">
     <v-container class="h-screen bg-[#0000000d] backdrop-blur-2xl">
       <v-row class="w-[580px] justify-center mx-auto items-center px-10 pt-32">
         <img src="@/assets/images/logo.webp" alt="logo" class="mb-10 invert" />
@@ -70,7 +71,6 @@ const submitForm = async () => {
             :rules="emailRules"
             name="email"
             required
-            
             id="email"
             variant="outlined"
             placeholder="Enter your email address"
@@ -105,18 +105,15 @@ const submitForm = async () => {
             density="default"
             >Forgot password</v-btn
           >
-          <v-btn
-            class="!w-full"
+          <CustomButton
+            text="login"
             color="#7F56D9"
-            elevation="0"
-            density="default"
-            size="large"
-            @click="submitForm"
+            :button-loader="loginLoader"
             id="login"
-            rounded="lg"
-            :loading="loginLoader"
-            >Login</v-btn
-          >
+            :block="true"
+            size="large"
+            type="submit"
+          />
         </div>
       </v-row>
     </v-container>

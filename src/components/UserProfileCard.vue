@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import type { User } from '@/types'
+import CustomButton from './Buttons/CustomButton.vue'
 const router = useRouter()
 const { user, goBackRoute } = defineProps({
   user: {
@@ -33,15 +34,7 @@ const goBack = () => {
       <p class="text-sm">{{ user.email }}</p>
     </v-card-text>
     <v-card-actions class="flex justify-center">
-      <v-btn
-        class="!w-full"
-        @click="goBack"
-        color="#7F56D9"
-        elevation="0"
-        density="default"
-        rounded="lg"
-        >Back</v-btn
-      >
+      <CustomButton text="Back" block @onClick="goBack" color="#7F56D9" />
     </v-card-actions>
   </v-card>
 </template>

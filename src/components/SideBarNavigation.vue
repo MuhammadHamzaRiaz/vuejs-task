@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import IconUser from '@/components/icons/IconUser.vue'
 import { useRouter } from 'vue-router'
+import CustomButton from './Buttons/CustomButton.vue'
 const router = useRouter()
 const logoutHandler = () => {
   router.push('/login')
@@ -22,15 +23,14 @@ const logoutHandler = () => {
 
     <template v-slot:append>
       <div class="pa-2">
-        <v-btn
-          class="!w-full"
-          @click="logoutHandler"
+        <CustomButton
+          text="Logout"
           color="#7F56D9"
-          elevation="0"
-          density="default"
-          rounded="lg"
-          >Logout</v-btn
-        >
+          @on-click="logoutHandler"
+          id="logout"
+          :block="true"
+          size="large"
+        />
       </div>
     </template>
   </v-navigation-drawer>
