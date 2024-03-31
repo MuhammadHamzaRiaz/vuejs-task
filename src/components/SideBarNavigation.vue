@@ -1,10 +1,22 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import IconUser from '@/components/icons/IconUser.vue'
 import { useRouter } from 'vue-router'
 import CustomButton from './Buttons/CustomButton.vue'
+import { useAuthStore } from '@/store/auth'
+const auth = useAuthStore()
 const router = useRouter()
-const logoutHandler = () => {
-  router.push('/login')
+const logoutLoader = ref(false)
+const logoutHandler = async () => {
+  try {
+    logoutLoader.value = true
+    await auth.logout()
+  } catch (error) {
+    console.log(error)
+  } finally {
+    logoutLoader.value = false
+    router.push('/login')
+  }
 }
 </script>
 
@@ -28,6 +40,7 @@ const logoutHandler = () => {
           color="#7F56D9"
           @on-click="logoutHandler"
           id="logout"
+          :button-loader="logoutLoader"
           :block="true"
           size="large"
         />
