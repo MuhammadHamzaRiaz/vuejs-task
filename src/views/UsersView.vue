@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import SideBarNavigation from '@/components/SideBarNavigation.vue'
-import TopNavBar from '@/components/TopNavBar.vue'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import IconInfo from '@/components/icons/IconInfo.vue'
 import UserDialog from '@/components/Dialog/AddUserDialog.vue'
 import { getUsers } from '@/apis/services/users'
 import { addUser } from '@/apis/services/users/addUser'
@@ -197,7 +194,6 @@ onMounted(() => {
           <div class="flex items-center justify-between relative p-3">
             <div class="flex gap-1 text-base font-medium items-center">
               User List
-              <IconInfo />
             </div>
             <CustomButton
               text="add new user"
