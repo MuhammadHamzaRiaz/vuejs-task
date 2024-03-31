@@ -10,6 +10,7 @@ const router = createRouter({
       path: '/',
       name: 'Home',
       redirect() {
+        // if user is not logged in , it will redirect to login page
         return '/users'
       }
     },
