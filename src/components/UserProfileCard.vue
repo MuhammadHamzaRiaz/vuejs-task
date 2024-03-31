@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import type { User } from '@/types'
 import CustomButton from './Buttons/CustomButton.vue'
 const router = useRouter()
 const { user, goBackRoute } = defineProps({
   user: {
-    type: Object as () => User,
+    type: Object,
     required: true
   },
   goBackRoute: {

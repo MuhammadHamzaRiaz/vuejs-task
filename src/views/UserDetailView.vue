@@ -3,9 +3,11 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import UserProfileCard from '@/components/UserProfileCard.vue'
 import { getUser } from '@/apis/services/users/user'
+import type { UserResponse } from '@/types'
 const route = useRoute()
 
 const user = ref({
+  _id: '',
   firstName: '',
   lastName: '',
   email: '',
@@ -15,9 +17,9 @@ const user = ref({
 const fetchUser = async () => {
   try {
     const id = route.params.id
-    const res = await getUser(id)
+    const res = await getUser(id.toString())
     console.log('res', res)
-    user.value = res.data
+    user.value = (res as UserResponse).data
   } catch (error) {
     console.log('error', error)
   }
