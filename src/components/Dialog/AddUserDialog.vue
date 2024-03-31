@@ -6,7 +6,7 @@ import CustomButton from '../Buttons/CustomButton.vue'
 const props = defineProps({
   dialog: Boolean,
   addingLoading: Boolean,
-  editData: {
+  dataBy: {
     type: Object,
     required: false
   },
@@ -28,10 +28,9 @@ const addUser = () => {
   if (valid.value) {
     if (props.type === 'edit') {
       emit('adduser', {
-        ...props.editData,
+        ...props.dataBy,
         firstName: data.value.first_name,
         lastName: data.value.last_name,
-        email: data.value.email
       })
     } else {
       emit('adduser', data.value)
@@ -49,21 +48,21 @@ const handleDialogClose = () => {
 const required = [(v: string) => !!v || 'This field is required']
 const emailRules = [
   (v: string) => !!v || 'E-mail is required',
-  (v: string) => (/.+@.+\..+/.test(v) ? true : 'E-mail must be valid')
+  (v: string) => (/.+@.+\..+/.test(v) ? true : 'Please enter a valid email address')
 ]
 watchEffect(() => {
-  if (props.editData) {
+  if (props.dataBy) {
     data.value = {
-      first_name: props.editData.firstName,
-      last_name: props.editData.lastName,
-      email: props.editData.email
+      first_name: props.dataBy.firstName,
+      last_name: props.dataBy.lastName,
+      email: props.dataBy.email
     }
   }
 })
 </script>
 
 <template>
-  <v-dialog v-model="dialog" max-width="500" persistent>
+  <v-dialog v-model="dialog" max-width="500" persistent v-if="dialog">
     <v-card class="!rounded-[14px]">
       <v-card-title class="text-h6 text-primary !font-medium border-b"
         >{{ type == 'edit' ? 'Update' : 'Add' }} User</v-card-title
@@ -96,11 +95,13 @@ watchEffect(() => {
           </v-col>
           <v-col cols="12" class="pa-0">
             <label class="text-sm mb-1">Email*</label>
+            <!--  disable email field in edit mode -->
             <v-text-field
               v-model="data.email"
               :rules="emailRules"
               required
               variant="outlined"
+              :disabled="type == 'edit'"
               placeholder="Enter your email address"
               density="comfortable"
               rounded="lg"

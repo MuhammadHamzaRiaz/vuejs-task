@@ -4,10 +4,8 @@ import { createdUsers } from '.'
 export const updateUser = (requestBody: User) => {
   return new Promise((resolve, reject) => {
     const user = createdUsers.find((user) => user._id === requestBody._id)
-
     if (user) {
       user.firstName = requestBody.firstName
-      user.email = requestBody.email
       user.lastName = requestBody.lastName
       const response = {
         data: {

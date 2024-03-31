@@ -17,13 +17,13 @@ const loginLoader = ref(false)
 const passwordRules = [
   (value: string) => {
     if (value.length >= 8) return true
-    return 'You must enter a valid password.'
+    return 'Password must be at least 8 characters long.'
   }
 ]
 const emailRules = [
   (value: string) => {
-    if (/^[a-z.-]+@[a-z.-]+\.[a-z]+$/i.test(value)) return true
-    return 'Must be a valid e-mail.'
+    if (/^[a-zA-Z0-9.-]+@[a-zA-Z.-]+\.[a-z]+$/.test(value)) return true
+    return 'Please enter a valid email address.'
   }
 ]
 const submitForm = async ({ email, password }: any) => {
@@ -41,8 +41,6 @@ const submitForm = async ({ email, password }: any) => {
       } else {
         toast.error('Login failed')
       }
-    } else {
-      toast.error('Please enter valid details.')
     }
   } catch (error) {
     console.log(error)

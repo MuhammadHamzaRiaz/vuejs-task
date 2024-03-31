@@ -50,6 +50,11 @@ const userAddingLoader = ref(false)
 const closeAddUserDialog = () => {
   addUserDialog.value = false
 }
+const userForAdd = ref({
+  first_name: '',
+  last_name: '',
+  email: ''
+})
 const addUserDialog = ref(false)
 const addUserHandler = async (value: AddUserPayload) => {
   try {
@@ -64,9 +69,15 @@ const addUserHandler = async (value: AddUserPayload) => {
   } finally {
     userAddingLoader.value = false
     addUserDialog.value = false
+    userForAdd.value = {
+      first_name: '',
+      last_name: '',
+      email: ''
+    }
   }
 }
 //  update user
+const userForUpdate = ref({})
 const userUpdateLoader = ref(false)
 const editUserDialog = ref(false)
 const editUser = (user: User) => {
@@ -75,6 +86,7 @@ const editUser = (user: User) => {
 }
 const closeUpdateUserDialog = () => {
   editUserDialog.value = false
+  userForUpdate.value = {}
 }
 const updateUserHandler = async (user: User) => {
   try {
@@ -92,7 +104,6 @@ const updateUserHandler = async (user: User) => {
   }
 }
 
-const userForUpdate = ref({})
 // here we are defining table header
 const tableHeader = ref([
   { title: 'Id.', key: '_id' },
@@ -161,6 +172,7 @@ onMounted(() => {
       @adduser="addUserHandler"
       :addingLoading="userAddingLoader"
       @close="closeAddUserDialog"
+      :dataBy="userForAdd"
       type="add"
     />
     <UserDialog
@@ -168,7 +180,7 @@ onMounted(() => {
       @adduser="updateUserHandler"
       :addingLoading="userUpdateLoader"
       @close="closeUpdateUserDialog"
-      :editData="userForUpdate"
+      :dataBy="userForUpdate"
       type="edit"
     />
     <ConfirmationDialog
@@ -192,9 +204,7 @@ onMounted(() => {
       >
         <template v-slot:table-top>
           <div class="flex items-center justify-between relative p-3">
-            <div class="flex gap-1 text-base font-medium items-center">
-              User List
-            </div>
+            <div class="flex gap-1 text-base font-medium items-center">User List</div>
             <CustomButton
               text="add new user"
               size="default"

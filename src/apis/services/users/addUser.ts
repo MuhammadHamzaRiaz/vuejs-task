@@ -11,7 +11,7 @@ export const addUser = (body: AddUserPayload) => {
       firstName: body.first_name,
       lastName: body.last_name
     }
-    createdUsers.push(user)
+    createdUsers.unshift(user)
     const response = {
       data: {
         status: 'success'
