@@ -142,8 +142,8 @@ const deleteUserHandler = async (user: User) => {
     console.log('error', error)
     toast.error('Failed to delete user')
   } finally {
-    getUsersHandler()
     deleteUserLoading.value = false
+    await getUsersHandler()
   }
 }
 

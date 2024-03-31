@@ -26,15 +26,14 @@ const emailRules = [
     return 'Must be a valid e-mail.'
   }
 ]
-const submitForm = async () => {
+const submitForm = async ({ email, password }: any) => {
   try {
     loginLoader.value = true
     if (valid.value) {
       const { data }: any = await userLogin({
-        email: email.value,
-        password: password.value
+        email,
+        password
       })
-      console.log(data)
       if (data.status == 'success') {
         authStore.login(data.user)
         toast.success('Logged in successfully')
@@ -54,7 +53,7 @@ const submitForm = async () => {
 </script>
 
 <template>
-  <v-form v-model="valid" @submit.prevent="submitForm">
+  <v-form v-model="valid" @submit.prevent="submitForm({ email, password })">
     <v-container class="h-screen bg-[#0000000d] backdrop-blur-2xl">
       <v-row class="w-[580px] justify-center mx-auto items-center px-10 pt-32">
         <img src="@/assets/images/logo.webp" alt="logo" class="mb-10 invert" />
