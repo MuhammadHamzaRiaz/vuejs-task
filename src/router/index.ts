@@ -7,6 +7,13 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
+      path: '/',
+      name: 'Home',
+      redirect() {
+        return '/users'
+      }
+    },
+    {
       path: '/login',
       name: 'Login',
       component: () => import('../views/LoginView.vue')
