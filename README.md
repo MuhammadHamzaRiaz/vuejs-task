@@ -1,6 +1,6 @@
 # VueJS-task
 
-This template should help get you started developing with Vue 3 in Vite.
+This is the Vuejs App handling user management
 
 ## Recommended IDE Setup
 
