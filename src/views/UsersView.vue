@@ -106,13 +106,13 @@ const updateUserHandler = async (user: User) => {
 
 // here we are defining table header
 const tableHeader = ref([
-  { title: 'Id.', key: '_id' },
+  { title: 'User ID', key: '_id' },
   {
-    title: 'Name',
+    title: 'User Name',
     key: 'firstName',
     value: (item: User) => `${item.firstName} ${item.lastName}`
   },
-  { title: 'Image', key: 'avatar' },
+  { title: 'Avatar', key: 'avatar' },
   { title: 'Email', key: 'email' },
   { title: 'Actions', key: 'actions', sortable: false }
 ])

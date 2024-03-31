@@ -17,13 +17,13 @@ const loginLoader = ref(false)
 const passwordRules = [
   (value: string) => {
     if (value.length >= 8) return true
-    return 'Password must be at least 8 characters long.'
+    return 'Password must be at least 8 characters long'
   }
 ]
 const emailRules = [
   (value: string) => {
     if (/^[a-zA-Z0-9.-]+@[a-zA-Z.-]+\.[a-z]+$/.test(value)) return true
-    return 'Please enter a valid email address.'
+    return 'Please enter a valid email address'
   }
 ]
 const submitForm = async ({ email, password }: any) => {
