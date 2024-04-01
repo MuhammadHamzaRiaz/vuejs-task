@@ -28,7 +28,6 @@ const getUsersHandler = async () => {
     users.value = res.data
     totalUsersCount.value = res.total
     totalPage.value = res.total_pages
-    console.log('res', res)
   } catch (error) {
     console.log('error', error)
   } finally {
@@ -62,7 +61,7 @@ const addUserHandler = async (value: AddUserPayload) => {
     const res = await addUser(value)
     getUsersHandler()
     toast.success('User added successfully')
-    console.log('res', res)
+    
   } catch (err) {
     console.log('err', err)
     toast.error('Failed to add user')
@@ -94,7 +93,7 @@ const updateUserHandler = async (user: User) => {
     const res = await updateUser(user)
     getUsersHandler()
     toast.success('User updated successfully')
-    console.log('user', res)
+   
   } catch (err) {
     console.log('err', err)
     toast.error('Failed to update user')
@@ -145,7 +144,7 @@ const deleteUserHandler = async (user: User) => {
     deleteUserLoading.value = true
     const res = await deleteUser(user)
     toast.success('User deleted successfully')
-    console.log('res', res)
+  
   } catch (error) {
     console.log('error', error)
     toast.error('Failed to delete user')
