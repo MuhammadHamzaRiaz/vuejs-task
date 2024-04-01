@@ -18,7 +18,6 @@ const fetchUser = async () => {
   try {
     const id = route.params.id
     const res = await getUser(id.toString())
-    console.log('res', res)
     user.value = (res as UserResponse).data
   } catch (error) {
     console.log('error', error)
